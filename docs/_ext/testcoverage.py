@@ -12,6 +12,7 @@ import datetime
 from io import BytesIO
 from lxml import etree as ET
 import shutil
+import lxml.etree
 
 default_constraint_err_msg = "Invalid value"
 validator_dir = ""
@@ -313,7 +314,7 @@ def get_working_commands():
                     line = fp.readline()
 
             try:
-                xml = ET.parse(BytesIO(bytes(string, 'utf-8')))
+                xml = ET.parse(BytesIO(bytes(string, 'utf-8')), parser=lxml.etree.XMLParser(resolve_entities=False))
             except Exception as e:
                 print("Failed to load interface definition file {0}".format(f))
                 print(e)
@@ -322,7 +323,7 @@ def get_working_commands():
             override_defaults(xml)
             
             try:
-                relaxng_xml = ET.parse(entry['schema_file'])
+                relaxng_xml = ET.parse(entry['schema_file'], parser=lxml.etree.XMLParser(resolve_entities=False))
                 validator = ET.RelaxNG(relaxng_xml)
 
                 if not validator.validate(xml):
