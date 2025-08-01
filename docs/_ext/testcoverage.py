@@ -288,10 +288,10 @@ def include_file(line, input_dir):
     if "#include <include" in line.strip():
         include_filename = line.strip().split('<')[1][:-1]
         with open(input_dir + include_filename) as ifp:
-            iline = ifp.readline()
+            iline = ifp.readline(5_000_000)
             while iline:
                 string = string + include_file(iline.strip(), input_dir)
-                iline = ifp.readline()
+                iline = ifp.readline(5_000_000)
     else:
         string = line
     return string
@@ -307,10 +307,10 @@ def get_working_commands():
 
             string = ""
             with open(entry['input_dir'] + f) as fp:
-                line = fp.readline()
+                line = fp.readline(5_000_000)
                 while line:                
                     string = string + include_file(line.strip(), entry['input_dir'])
-                    line = fp.readline()
+                    line = fp.readline(5_000_000)
 
             try:
                 xml = ET.parse(BytesIO(bytes(string, 'utf-8')))
